@@ -1,10 +1,12 @@
-![Python](https://img.shields.io/badge/python-3.11-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-production-brightgreen)
+![Python](https://img.shields.io/badge/python-3.11-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-production-brightgreen) [![CI](https://github.com/nruppatel16/parcelvisioncloudsec/actions/workflows/ci.yml/badge.svg)](https://github.com/nruppatel16/parcelvisioncloudsec/actions/workflows/ci.yml) ![Last Commit](https://img.shields.io/github/last-commit/nruppatel16/parcelvisioncloudsec)
 
 LobbyOps automates parcel intake at a residential property with two buildings. When a package arrives, a staff member photographs the shipping label using a mobile shortcut. The image goes to a Flask backend running on EC2, which extracts the unit number and recipient name using the Gemini Vision API, logs the parcel to Google Sheets, and places the unit in a building-scoped queue. A JavaScript listener injected into the property management portal (1Valet) polls that queue and types each unit into the active delivery entry form -- no manual keyboard input required. The full cycle from photo to portal entry takes under fifteen seconds.
 
 ## Table of Contents
 
 - [System Architecture](#system-architecture)
+- [Request Lifecycle](#request-lifecycle)
+- [Queue State Machine](#queue-state-machine)
 - [Deployment](#deployment)
 - [Security](#security)
 - [Configuration](#configuration)
@@ -17,49 +19,137 @@ LobbyOps automates parcel intake at a residential property with two buildings. W
 <details>
 <summary>System Architecture</summary>
 
-```
-[Mobile Camera / iOS Shortcut]
-          |
-          | HTTPS POST /upload
-          v
-  [nginx :443 -- TLS termination, rate limiting, security headers]
-          |
-          | proxy_pass to 127.0.0.1:5002
-          v
-  [gunicorn -- 2 workers]
-          |
-          v
-       [app.py]
-          |
-          +-----------> [ocr_utils.py]
-          |                   |
-          |                   +--> [Gemini 2.5 Flash API]  (HTTPS, primary)
-          |                   |       on UNKNOWN fields:
-          |                   +--> [Gemini focused retry]  (HTTPS, second pass)
-          |                   |
-          |                   +--> [pytesseract]           (local, fallback)
-          |
-          +-----------> [sheet_utils.py] --> [Google Sheets API]  (HTTPS)
-          |
-          +-----------> [queue_store.py] --> [SQLite: /data/lobbyops.db]
+```mermaid
+flowchart LR
+    subgraph client[" "]
+        A(["📱 Mobile\nCamera"])
+    end
 
-  [inject_tab.py]  (CLI, run once on lobby workstation)
-          |
-          | WebSocket -- Chrome DevTools Protocol (localhost:9222)
-          v
-  [Chrome: 1Valet portal tab]
-          |
-          | [smartlockerscript.js] polls every 5s
-          |
-          +-- GET /valet/pending?building=G2
-          +-- POST /valet/complete
-          +-- POST /valet/flag
-          |
-          v
-  [1Valet DOM -- suite number input field]
+    subgraph ec2["EC2  ca-central-1"]
+        B["nginx :443\nTLS · rate limit · origin check"]
+        C["gunicorn :5002\n2 workers"]
+        D["app.py"]
+        E["ocr_utils.py"]
+        F["queue_store.py"]
+        G["sheet_utils.py"]
+        H[("SQLite\n/data/lobbyops.db")]
+    end
+
+    subgraph ext["External APIs"]
+        I(["Gemini\n2.5 Flash"])
+        J(["pytesseract"])
+        K(["Google\nSheets"])
+    end
+
+    subgraph lobby["Lobby Workstation"]
+        L["inject_tab.py"]
+        M["Chrome + 1Valet"]
+        N["smartlockerscript.js"]
+    end
+
+    A -->|"HTTPS POST /upload"| B
+    B -->|"proxy_pass"| C
+    C --> D
+    D --> E
+    D --> F
+    D --> G
+    F --> H
+    E -->|"primary"| I
+    E -.->|"fallback"| J
+    G --> K
+    L -->|"CDP WebSocket\nlocalhost:9222"| M
+    M --> N
+    N -->|"GET /valet/pending"| D
+    N -->|"POST /valet/complete"| D
+    N --> M
 ```
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full technical breakdown.
+
+</details>
+
+<details>
+<summary>Request Lifecycle</summary>
+
+End-to-end sequence from photo to 1Valet entry.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant M as Mobile
+    participant F as Flask (app.py)
+    participant O as ocr_utils.py
+    participant G as Gemini API
+    participant S as Google Sheets
+    participant Q as SQLite
+    participant J as smartlockerscript.js
+    participant V as 1Valet DOM
+
+    M->>F: POST /upload {image, building: G2}
+    F-->>M: 202 Accepted {job_id}
+    Note over F: background thread spawned
+
+    F->>O: extract_data(image, building=G2)
+    O->>G: preprocessed image + extraction prompt
+    G-->>O: {unit, name, supplier, parcel_type}
+
+    alt any field is UNKNOWN
+        O->>G: focused retry prompt
+        G-->>O: {unit, name}  confidence=medium
+    end
+
+    alt Gemini unavailable
+        O->>O: pytesseract fallback  confidence=low
+    end
+
+    O-->>F: {unit, name, supplier, parcel_type, confidence}
+    F->>S: append_row (retry x3 w/ backoff)
+    S-->>F: row written
+
+    alt unit == UNKNOWN
+        F-->>M: GET /result → {status: review_required}
+    else unit resolved
+        F->>Q: INSERT status=pending
+        F-->>M: GET /result → {status: success, confidence: high}
+    end
+
+    loop poll every 5s
+        J->>F: GET /valet/pending?building=G2
+        F-->>J: {units: [{unit: 204, name: John Smith}]}
+        J->>V: focus input, type 204 char-by-char
+        V-->>J: dropdown match found → clicked
+        J->>F: POST /valet/complete {unit: 204, success: true}
+        F->>Q: UPDATE status=complete, completed_at=now
+    end
+```
+
+</details>
+
+<details>
+<summary>Queue State Machine</summary>
+
+Every parcel record in SQLite follows this lifecycle.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    [*] --> pending : enqueue()\nextract succeeded
+
+    pending --> complete : addUnit() success\nPOST /valet/complete
+
+    pending --> pending : addUnit() threw\nretry_count + 1 < 3
+
+    pending --> flagged : retry_count reaches 3\nauto-flagged by increment_retry()
+
+    pending --> failed : JS max retries exceeded\nPOST /valet/flag
+
+    complete --> [*] : completed_at recorded
+    flagged --> [*] : GET /valet/flagged\nmanual review
+    failed --> [*] : manual follow-up
+```
+
+Flagged items surface in `GET /valet/flagged` (requires API key). Staff enter the unit manually in 1Valet and acknowledge the flag.
 
 </details>
 
