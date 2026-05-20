@@ -4,6 +4,7 @@ LobbyOps automates parcel intake at a residential property with two buildings. W
 
 ## Table of Contents
 
+- [Live Demo](#live-demo)
 - [System Architecture](#system-architecture)
 - [Request Lifecycle](#request-lifecycle)
 - [Queue State Machine](#queue-state-machine)
@@ -15,6 +16,16 @@ LobbyOps automates parcel intake at a residential property with two buildings. W
 - [How the 1Valet automation works](#how-the-1valet-automation-works)
 - [Accuracy](#accuracy)
 - [Development](#development)
+
+## Live Demo
+
+**OCR extraction pipeline** — label photo to structured JSON in under two seconds
+
+<img src="assets/extract.svg" alt="OCR extraction pipeline" width="100%"/>
+
+**1Valet automation** — CDP injection and queue listener processing units
+
+<img src="assets/inject.svg" alt="1Valet listener" width="100%"/>
 
 <details>
 <summary>System Architecture</summary>
