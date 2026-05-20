@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 352" width="740" height="352">
+  <style>
+    @keyframes a { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
+    .bg  { fill: #0d1117 }
+    .bar { fill: #161b22 }
+    .bdr { fill: none; stroke: #30363d; stroke-width: 1 }
+    text { font-family: 'Fira Code','Cascadia Code','JetBrains Mono','Courier New',monospace; font-size: 13px }
+    .d  { fill: #6e7681 } .w  { fill: #c9d1d9 } .g  { fill: #3fb950 }
+    .b  { fill: #58a6ff } .lb { fill: #79c0ff } .s  { fill: #a5d6ff }
+    .r  { fill: #ff7b72 } .ttl { fill: #8b949e; font-size: 12px }
+    .l0  { opacity: 0; animation: a .05s forwards  0.5s }
+    .l1  { opacity: 0; animation: a .05s forwards  1.5s }
+    .l2  { opacity: 0; animation: a .05s forwards  2.2s }
+    .l3  { opacity: 0; animation: a .05s forwards  3.7s }
+    .l4  { opacity: 0; animation: a .05s forwards  4.2s }
+    .l5  { opacity: 0; animation: a .05s forwards  4.45s }
+    .l6  { opacity: 0; animation: a .05s forwards  4.7s }
+    .l7  { opacity: 0; animation: a .05s forwards  4.95s }
+    .l8  { opacity: 0; animation: a .05s forwards  5.2s }
+    .l9  { opacity: 0; animation: a .05s forwards  5.45s }
+    .l10 { opacity: 0; animation: a .05s forwards  5.7s }
+    .l11 { opacity: 0; animation: a .05s forwards  6.2s }
+    .cur { animation: blink 0.9s infinite 6.2s; opacity: 0 }
+  </style>
+
+  <rect class="bg"  width="740" height="352" rx="8"/>
+  <rect class="bdr" width="739.5" height="351.5" x=".25" y=".25" rx="8"/>
+  <rect class="bar" width="740" height="38" rx="8"/>
+  <rect class="bar" width="740" height="10" y="28"/>
+  <circle fill="#ff5f57" cx="18" cy="19" r="6"/>
+  <circle fill="#febc2e" cx="38" cy="19" r="6"/>
+  <circle fill="#28c840" cx="58" cy="19" r="6"/>
+  <text class="ttl" x="370" y="24" text-anchor="middle">lobbyops &#x2014; ocr_utils.py</text>
+
+  <text class="l0" y="66">
+    <tspan x="20" class="g">user@lobbyops</tspan><tspan class="d">:~/lobbyops$ </tspan><tspan class="w">python ocr_utils.py /uploads/tmp_a4f8.jpg G2</tspan>
+  </text>
+
+  <text class="l1" y="100">
+    <tspan x="20" class="d">2025-05-20 14:30:22  </tspan><tspan class="b">INFO</tspan><tspan class="d">  ocr_utils  </tspan><tspan class="w">analyzing image=</tspan><tspan class="lb">tmp_a4f8.jpg</tspan><tspan class="w"> building=</tspan><tspan class="lb">G2</tspan>
+  </text>
+
+  <text class="l2" y="122">
+    <tspan x="20" class="d">2025-05-20 14:30:22  </tspan><tspan class="b">INFO</tspan><tspan class="d">  ocr_utils  </tspan><tspan class="w">sending image to Gemini</tspan><tspan class="d">  ...</tspan>
+  </text>
+
+  <text class="l3" y="144">
+    <tspan x="20" class="d">2025-05-20 14:30:24  </tspan><tspan class="b">INFO</tspan><tspan class="d">  ocr_utils  </tspan><tspan class="g">extraction complete</tspan><tspan class="d">  unit=</tspan><tspan class="lb">2401</tspan><tspan class="d">  confidence=</tspan><tspan class="g">high</tspan>
+  </text>
+
+  <text class="l4 d" x="20" y="174">{</text>
+
+  <text class="l5" y="196">
+    <tspan x="32" class="r">&#x22;unit&#x22;</tspan><tspan class="d">:        </tspan><tspan class="s">&#x22;2401&#x22;</tspan><tspan class="d">,</tspan>
+  </text>
+  <text class="l6" y="218">
+    <tspan x="32" class="r">&#x22;name&#x22;</tspan><tspan class="d">:        </tspan><tspan class="s">&#x22;Jordan Park&#x22;</tspan><tspan class="d">,</tspan>
+  </text>
+  <text class="l7" y="240">
+    <tspan x="32" class="r">&#x22;supplier&#x22;</tspan><tspan class="d">:     </tspan><tspan class="s">&#x22;AMAZON&#x22;</tspan><tspan class="d">,</tspan>
+  </text>
+  <text class="l8" y="262">
+    <tspan x="32" class="r">&#x22;parcel_type&#x22;</tspan><tspan class="d">: </tspan><tspan class="s">&#x22;AMAZON BOX&#x22;</tspan><tspan class="d">,</tspan>
+  </text>
+  <text class="l9" y="284">
+    <tspan x="32" class="r">&#x22;confidence&#x22;</tspan><tspan class="d">:  </tspan><tspan class="s">&#x22;high&#x22;</tspan>
+  </text>
+
+  <text class="l10 d" x="20" y="306">}</text>
+
+  <text class="l11" y="330">
+    <tspan x="20" class="g">user@lobbyops</tspan><tspan class="d">:~/lobbyops$ </tspan><tspan class="cur w">&#x2587;</tspan>
+  </text>
+</svg>

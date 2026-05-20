@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 396" width="740" height="396">
+  <style>
+    @keyframes a { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes blink { 0%,49% { opacity: 1 } 50%,100% { opacity: 0 } }
+    .bg  { fill: #0d1117 }
+    .bar { fill: #161b22 }
+    .bdr { fill: none; stroke: #30363d; stroke-width: 1 }
+    text { font-family: 'Fira Code','Cascadia Code','JetBrains Mono','Courier New',monospace; font-size: 13px }
+    .d  { fill: #6e7681 } .w  { fill: #c9d1d9 } .g  { fill: #3fb950 }
+    .b  { fill: #58a6ff } .lb { fill: #79c0ff } .y  { fill: #d29922 }
+    .ttl { fill: #8b949e; font-size: 12px }
+    .l0  { opacity: 0; animation: a .05s forwards  0.5s }
+    .l1  { opacity: 0; animation: a .05s forwards  1.3s }
+    .l2  { opacity: 0; animation: a .05s forwards  1.6s }
+    .l3  { opacity: 0; animation: a .05s forwards  2.0s }
+    .l4  { opacity: 0; animation: a .05s forwards  2.4s }
+    .l5  { opacity: 0; animation: a .05s forwards  2.8s }
+    .l6  { opacity: 0; animation: a .05s forwards  3.6s }
+    .l7  { opacity: 0; animation: a .05s forwards  4.2s }
+    .l8  { opacity: 0; animation: a .05s forwards  4.9s }
+    .l9  { opacity: 0; animation: a .05s forwards  5.5s }
+    .l10 { opacity: 0; animation: a .05s forwards  6.5s }
+    .l11 { opacity: 0; animation: a .05s forwards  7.8s }
+    .l12 { opacity: 0; animation: a .05s forwards  8.4s }
+    .l13 { opacity: 0; animation: a .05s forwards  9.0s }
+    .cur { animation: blink 0.9s infinite 9.0s; opacity: 0 }
+  </style>
+
+  <rect class="bg"  width="740" height="396" rx="8"/>
+  <rect class="bdr" width="739.5" height="395.5" x=".25" y=".25" rx="8"/>
+  <rect class="bar" width="740" height="38" rx="8"/>
+  <rect class="bar" width="740" height="10" y="28"/>
+  <circle fill="#ff5f57" cx="18" cy="19" r="6"/>
+  <circle fill="#febc2e" cx="38" cy="19" r="6"/>
+  <circle fill="#28c840" cx="58" cy="19" r="6"/>
+  <text class="ttl" x="370" y="24" text-anchor="middle">lobbyops &#x2014; inject_tab.py + listener</text>
+
+  <text class="l0" y="66">
+    <tspan x="20" class="g">user@lobbyops</tspan><tspan class="d">:~/lobbyops$ </tspan><tspan class="w">python inject_tab.py https://api.lobbyops.io G2</tspan>
+  </text>
+
+  <text class="l1" y="100">
+    <tspan x="20" class="d">Target (1Valet URL match): </tspan><tspan class="lb">[1Valet &#x2014; Galleria 2 Delivery Log]</tspan>
+  </text>
+  <text class="l2" y="122">
+    <tspan x="20" class="d">Building: </tspan><tspan class="w">G2</tspan><tspan class="d">  |  SERVER_URL injected: </tspan><tspan class="w">https://api.lobbyops.io</tspan>
+  </text>
+  <text class="l3" y="144">
+    <tspan x="20" class="g">Script confirmed on window.</tspan>
+  </text>
+  <text class="l4" y="166">
+    <tspan x="20" class="g">ADD DELIVERY popup detected. Listener starts automatically.</tspan>
+  </text>
+  <text class="l5 d" x="20" y="188">Console: valetStatus() | startValetListener() | stopValetListener()</text>
+
+  <text class="l6" y="218">
+    <tspan x="20" class="d">[14:30:27]  </tspan><tspan class="b">1 pending unit(s)</tspan><tspan class="d"> for building </tspan><tspan class="lb">G2</tspan>
+  </text>
+  <text class="l7" y="240">
+    <tspan x="20" class="d">[14:30:27]  </tspan><tspan class="w">Processing: </tspan><tspan class="lb">2401</tspan><tspan class="d"> (Jordan Park)</tspan>
+  </text>
+  <text class="l8" y="262">
+    <tspan x="20" class="d">[14:30:27]  </tspan><tspan class="w">Unit selected: </tspan><tspan class="lb">2401</tspan>
+  </text>
+  <text class="l9" y="284">
+    <tspan x="20" class="d">[14:30:28]  </tspan><tspan class="g">Complete: 2401</tspan>
+  </text>
+  <text class="l10" y="306">
+    <tspan x="20" class="d">[14:30:33]  Polling... queue empty</tspan>
+  </text>
+  <text class="l11" y="328">
+    <tspan x="20" class="d">[14:30:38]  </tspan><tspan class="b">1 pending unit(s)</tspan><tspan class="d"> for building </tspan><tspan class="lb">G2</tspan>
+  </text>
+  <text class="l12" y="350">
+    <tspan x="20" class="d">[14:30:38]  </tspan><tspan class="w">Processing: </tspan><tspan class="lb">1105</tspan><tspan class="d"> (Sam Chen)</tspan>
+  </text>
+  <text class="l13" y="372">
+    <tspan x="20" class="d">[14:30:39]  </tspan><tspan class="g">Complete: 1105  </tspan><tspan class="cur w">&#x2587;</tspan>
+  </text>
+</svg>
