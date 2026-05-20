@@ -1,0 +1,32 @@
+[Unit]
+Description=LobbyOps parcel automation backend
+After=network.target
+
+[Service]
+Type=simple
+User=lobbyops
+Group=lobbyops
+WorkingDirectory=/opt/lobbyops/lobbyops
+EnvironmentFile=/opt/lobbyops/lobbyops/.env
+ExecStart=/usr/local/bin/gunicorn app:app \
+    --workers 2 \
+    --bind 127.0.0.1:5002 \
+    --timeout 120 \
+    --access-logfile - \
+    --error-logfile -
+
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=lobbyops
+
+ProtectSystem=strict
+PrivateTmp=true
+NoNewPrivileges=true
+CapabilityBoundingSet=
+ReadWritePaths=/data /opt/lobbyops/lobbyops/uploads
+
+[Install]
+WantedBy=multi-user.target

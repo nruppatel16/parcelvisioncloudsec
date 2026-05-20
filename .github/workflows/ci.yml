@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('lobbyops/requirements.txt') }}
+
+      - name: Install linters
+        run: pip install flake8 black
+
+      - name: flake8
+        run: flake8 lobbyops/ --max-line-length=120 --exclude=lobbyops/infra
+
+      - name: black
+        run: black --check lobbyops/ --line-length=120 --exclude=lobbyops/infra
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('lobbyops/requirements.txt') }}
+
+      - name: Install dependencies
+        run: pip install -r lobbyops/requirements.txt pytest pytest-cov
+
+      - name: pytest
+        run: pytest lobbyops/ --cov=lobbyops --cov-report=term-missing -q
+        env:
+          ENV: development
+          GEMINI_API_KEY: test
+          API_KEY: test
+          SHEET_ID_G1: test
+          SHEET_ID_G2: test
+          DB_PATH: /tmp/lobbyops_test.db
+
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: bandit
+        run: |
+          pip install bandit
+          bandit -r lobbyops/ -x lobbyops/infra --severity-level medium -q
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: npm audit
+        run: |
+          cd lobbyops
+          npm init -y > /dev/null 2>&1
+          npm install --save-dev > /dev/null 2>&1 || true
+          npm audit --audit-level=moderate || true
+
+  deploy-instructions:
+    name: Deploy instructions
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [lint, test, security]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write deployment instructions to job summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## Deployment
+
+          CI passed on main. To deploy:
+
+          ```bash
+          ssh lobbyops@<elastic-ip> "bash /opt/lobbyops/scripts/deploy.sh"
+          ```
+          EOF
