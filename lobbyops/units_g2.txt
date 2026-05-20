@@ -1,0 +1,13 @@
+# Unit numbers for Galleria 2 (1285 Dupont St).
+# One unit per line. No headers, no trailing whitespace.
+# Used by ocr_utils for fuzzy unit validation (cutoff 0.85).
+101
+201
+301
+401
+501
+601
+701
+801
+901
+1001

@@ -1,0 +1,13 @@
+# Unit numbers for Galleria 1 (10 Graphophone Grove).
+# One unit per line. No headers, no trailing whitespace.
+# Used by ocr_utils for fuzzy unit validation (cutoff 0.85).
+101
+102
+201
+202
+301
+302
+401
+402
+501
+502
