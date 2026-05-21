@@ -27,6 +27,10 @@ LobbyOps automates parcel intake at a residential property with two buildings. W
 
 <img src="assets/inject.svg" alt="1Valet listener" width="100%"/>
 
+**Full request cycle** — unified log view from photo capture to 1Valet portal entry, across all system layers
+
+<img src="assets/cycle.svg" alt="Full request cycle" width="100%"/>
+
 <details>
 <summary>System Architecture</summary>
 
